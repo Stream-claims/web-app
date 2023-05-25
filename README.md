@@ -1,3 +1,6 @@
+## GOTO: https://stream-auth.auth.us-east-1.amazoncognito.com/login?client_id=6922tc0tg82447hhdmsqdep0gl&response_type=code&scope=email+openid+phone+profile&redirect_uri=http%3A%2F%2Flocalhost%3A5173
+
+
 # Svelte + TS + Vite
 
 This template should help get you started developing with Svelte and TypeScript in Vite.
