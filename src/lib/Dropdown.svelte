@@ -1,56 +1,43 @@
 <script lang="ts">
   import { onMount, afterUpdate, onDestroy } from 'svelte';
+  import { clickOutside } from "./click_outside.js";
 
   export let options = [];
   export let selectedOption = null; 
 
   let isOpen = false;
-
-  function toggleDropdown() {
-    isOpen = !isOpen;
-  }
+  let fileInput;
 
   function selectOption(option) {
     selectedOption = option;
     isOpen = false;
   }
 
+  function handleFilePickerClick() {
+    fileInput.click();
+  }
 
-  // Close dropdown when clicking outside
-  onMount(() => {
-    const handleClickOutside = (event) => {
-      if (isOpen && !event.target.closest('.dropdown-container')) {
-        isOpen = false;
-      }
-    };
-
-    document.addEventListener('click', handleClickOutside);
-
-    afterUpdate(() => {
-      document.addEventListener('click', handleClickOutside);
-    });
-
-    onDestroy(() => {
-      document.removeEventListener('click', handleClickOutside);
-    });
-  });
+  function dropdownToggle() {
+    isOpen = !isOpen;
+  }
 
     function handleFileUpload(event) {
     const file = event.target.files[0];
     // Perform further processing with the uploaded file
     console.log('Uploaded file:', file);
   }
-
 </script>
+
 
 <div class="dropdown-container">
 
   <p class="dropdown-text"> Claims </p>
 
-  <button class="dropdown-toggle" on:click={toggleDropdown}>
+  <button class="dropdown-toggle" on:click={dropdownToggle} use:clickOutside on:outclick={() => (isOpen = false)}>
     {selectedOption ? selectedOption : 'Select an option'}
     <span class="dropdown-icon">{isOpen ? '▲' : '▼'}</span>
   </button>
+
   {#if isOpen}
     <ul class="dropdown-menu">
       {#each options as option}
@@ -59,9 +46,15 @@
     </ul>
   {/if}
 
-<input type="file" on:change={handleFileUpload}>
+<button class="file-picker" on:click={handleFilePickerClick}>
+Choose File
+</button>
+
+<input type="file" bind:this={fileInput} hidden on:change={handleFileUpload}>
 
 </div>
+
+
 
 <style>
   .dropdown-text {
@@ -110,4 +103,5 @@
     padding: 8px 12px;
     cursor: pointer;
   }
+  
 </style>

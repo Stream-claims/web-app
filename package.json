@@ -14,11 +14,13 @@
     "@tsconfig/svelte": "^4.0.1",
     "svelte": "^3.57.0",
     "svelte-check": "^2.10.3",
+    "sveltekit-adapter-aws": "^4.5.1",
     "tslib": "^2.5.0",
     "typescript": "^5.0.2",
     "vite": "^4.3.2"
   },
   "dependencies": {
-    "pdfjs-dist": "^3.6.172"
+    "svelte-pdf-viewer": "^1.0.0",
+    "svelte-preprocess": "^5.0.3"
   }
 }

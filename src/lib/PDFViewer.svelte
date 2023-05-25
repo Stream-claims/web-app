@@ -1,67 +1,74 @@
 <script>
-  import { onMount } from "svelte";
-  // import { getDocument } from 'pdfjs-dist/es5/build/pdf';
+  import { onMount } from 'svelte';
 
-  export let url = '';
+  let pdfDoc;
+  let currentPage = 1;
+  let totalPages = 0;
+  let canvasRef;
+  let context;
 
-  let pdfDoc = null;
-  let pageNum = 1;
-  let pageNumPending = null;
-  let scale = 0.8;
-  let canvas = null;
-  let ctx = null;
+  async function loadPDF(url) {
+    const loadingTask = pdfjsLib.getDocument(url);
+    pdfDoc = await loadingTask.promise;
+    totalPages = pdfDoc.numPages;
+    renderPage(currentPage);
+  }
 
-  async function renderPage(num) {
-    const page = await pdfDoc.getPage(num);
+  async function renderPage(pageNumber) {
+    const page = await pdfDoc.getPage(pageNumber);
+
+    const scale = 1.5;
     const viewport = page.getViewport({ scale });
+
+    const canvas = canvasRef;
+    context = canvas.getContext('2d');
     canvas.height = viewport.height;
     canvas.width = viewport.width;
 
     const renderContext = {
-      canvasContext: ctx,
+      canvasContext: context,
       viewport: viewport
     };
-    const renderTask = page.render(renderContext);
-    await renderTask.promise;
-    pageNumPending = null;
+
+    await page.render(renderContext);
   }
 
-  function queueRenderPage(num) {
-    if (pageNumPending !== null) {
-      pageNumPending = num;
-    } else {
-      renderPage(num);
+  function goToPage(pageNumber) {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      currentPage = pageNumber;
+      renderPage(currentPage);
     }
   }
 
-  async function onPrevPage() {
-    if (pageNum <= 1) {
-      return;
-    }
-    pageNum--;
-    queueRenderPage(pageNum);
-  }
-
-  async function onNextPage() {
-    if (pageNum >= pdfDoc.numPages) {
-      return;
-    }
-    pageNum++;
-    queueRenderPage(pageNum);
-  }
-
-  onMount(async () => {
-    canvas = document.getElementById('pdfCanvas');
-    ctx = canvas.getContext('2d');
-    pdfDoc = await getDocument(url).promise;
-    renderPage(pageNum);
+  onMount(() => {
+    const url = 'path/to/your/pdf/file.pdf';
+    loadPDF(url);
   });
 </script>
 
-<button on:click={onPrevPage}>Prev</button>
-<button on:click={onNextPage}>Next</button>
-<canvas id="pdfCanvas"></canvas>
+<main>
+  <canvas bind:this={canvasRef}></canvas>
+
+  <div>
+    <button on:click={() => goToPage(currentPage - 1)} disabled={currentPage === 1}>Previous</button>
+    <span>{currentPage} of {totalPages}</span>
+    <button on:click={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages}>Next</button>
+  </div>
+</main>
 
 <style>
-  /* Add styles here */
+  canvas {
+    border: 1px solid #ccc;
+  }
 </style>
+
+<!-- <script>
+  import * as PdfViewer from 'svelte-pdf-viewer'
+
+  let myFileUrl = '../assets/file.pdf';
+  let pdfInfos
+
+</script>
+
+<PdfViewer file={ myFileUrl} bind:infos={ pdfInfos }/>
+-->
