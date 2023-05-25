@@ -1,4 +1,4 @@
-## GOTO: https://stream-auth.auth.us-east-1.amazoncognito.com/login?client_id=6922tc0tg82447hhdmsqdep0gl&response_type=code&scope=email+openid+phone+profile&redirect_uri=http%3A%2F%2Flocalhost%3A5173
+## GOTO: https://stream-auth.auth.us-east-1.amazoncognito.com/login?client_id=6922tc0tg82447hhdmsqdep0gl&response_type=code&scope=email+openid+phone+profile&redirect_uri=http%3A%2F%2Flocalhost%3A5173 (note: final callback step in auth will fail, since not connected to deployed website yet)
 
 
 # Svelte + TS + Vite
